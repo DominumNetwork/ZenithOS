@@ -10,35 +10,30 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link id="app-favicon" rel="icon" href="https://cdn.jsdelivr.net/gh/DominumNetwork/Dominum@main/src/assets/images/transparent-dominum.png" />
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome for icons -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@600&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/index.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   </head>
   <body class="select-none overflow-hidden m-0 p-0 w-screen h-screen bg-slate-950 text-slate-100 font-sans antialiased">
-    <!-- Wallpaper & Background Canvas -->
     <div id="wallpaper-wrapper" class="absolute inset-0 z-0 pointer-events-none overflow-hidden transition-all duration-300">
-      <div id="wallpaper-image" class="absolute inset-0 bg-cover bg-center transition-all duration-500 transform scale-105"></div>
+      <div id="wallpaper-image" class="absolute inset-0 bg-cover bg-center transition-all duration-300 transform scale-105"></div>
+      <video id="wallpaper-video" class="hidden absolute inset-0 w-full h-full object-cover transition-opacity duration-500" loop muted playsinline></video>
       <canvas id="wallpaper-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-40"></canvas>
-      <div id="wallpaper-overlay" class="absolute inset-0 bg-black/30 pointer-events-none transition-opacity duration-300"></div>
+      <div id="wallpaper-overlay" class="absolute inset-0 bg-black/25 pointer-events-none transition-opacity duration-300"></div>
+      <div id="wallpaper-vignette"></div>
     </div>
 
-    <!-- Main Desktop Workspace -->
     <div id="desktop" class="relative z-10 w-full h-full flex flex-col overflow-hidden">
-      
-      <!-- Top macOS/WebOS Menu Bar -->
-      <header id="topbar" class="h-8 w-full flex items-center justify-between px-3 text-xs font-medium backdrop-blur-xl bg-slate-950/60 border-b border-white/10 z-50 select-none shadow-sm transition-colors duration-200">
-        <!-- Left Menus -->
+      <header id="topbar">
         <div class="flex items-center gap-1">
-          <!-- Zenith Apple-style Logo & System Menu -->
           <div class="relative menu-dropdown-container">
-            <button id="zenith-logo-btn" class="px-2 py-1 rounded hover:bg-white/10 transition-colors flex items-center gap-1 font-bold text-sm tracking-wider" aria-label="Zenith Menu">
+            <button id="zenith-logo-btn" class="px-2 py-1 rounded hover:bg-white/10 transition-colors flex items-center gap-1.5 font-bold text-xs" aria-label="System Menu">
               <i class="fa-solid fa-atom text-accent"></i>
               <span class="font-semibold tracking-wide ml-0.5">Zenith</span>
             </button>
-            <div id="zenith-system-menu" class="menu-dropdown hidden absolute top-full left-0 mt-1 w-56 rounded-xl bg-slate-900/90 backdrop-blur-2xl border border-white/15 shadow-2xl py-1.5 z-50 text-xs">
+            <div id="zenith-system-menu" class="menu-dropdown hidden absolute top-full left-0 mt-1 w-56 z-50 text-xs">
               <button class="menu-item" data-action="about"><i class="fa-solid fa-circle-info mr-2 opacity-70"></i>About ZenithOS</button>
               <div class="menu-divider"></div>
               <button class="menu-item" data-action="settings"><i class="fa-solid fa-sliders mr-2 opacity-70"></i>System Settings...</button>
@@ -51,10 +46,9 @@
             </div>
           </div>
 
-          <!-- Menu Items: File, Edit, View, Go, Window, Help -->
           <div class="relative menu-dropdown-container">
-            <button class="menu-bar-btn px-2.5 py-1 rounded hover:bg-white/10 transition-colors">File</button>
-            <div class="menu-dropdown hidden absolute top-full left-0 mt-1 w-48 rounded-xl bg-slate-900/90 backdrop-blur-2xl border border-white/15 shadow-2xl py-1.5 z-50 text-xs">
+            <button class="menu-bar-btn">File</button>
+            <div class="menu-dropdown hidden absolute top-full left-0 mt-1 w-48 z-50 text-xs">
               <button class="menu-item" data-action="open-files"><i class="fa-regular fa-folder-open mr-2 opacity-70"></i>Open Files</button>
               <button class="menu-item" data-action="open-terminal"><i class="fa-solid fa-terminal mr-2 opacity-70"></i>New Terminal</button>
               <button class="menu-item" data-action="open-code"><i class="fa-solid fa-code mr-2 opacity-70"></i>New Script</button>
@@ -64,17 +58,18 @@
           </div>
 
           <div class="relative menu-dropdown-container">
-            <button class="menu-bar-btn px-2.5 py-1 rounded hover:bg-white/10 transition-colors">View</button>
-            <div class="menu-dropdown hidden absolute top-full left-0 mt-1 w-52 rounded-xl bg-slate-900/90 backdrop-blur-2xl border border-white/15 shadow-2xl py-1.5 z-50 text-xs">
+            <button class="menu-bar-btn">View</button>
+            <div class="menu-dropdown hidden absolute top-full left-0 mt-1 w-52 z-50 text-xs">
+              <button class="menu-item" data-action="toggle-icons"><i class="fa-regular fa-clone mr-2 opacity-70"></i>Toggle Desktop Icons</button>
               <button class="menu-item" data-action="toggle-clock"><i class="fa-regular fa-clock mr-2 opacity-70"></i>Toggle Desktop Clock</button>
               <button class="menu-item" data-action="cycle-wallpaper"><i class="fa-regular fa-image mr-2 opacity-70"></i>Next Wallpaper</button>
-              <button class="menu-item" data-action="toggle-wallpaper-blur"><i class="fa-solid fa-wand-magic-sparkles mr-2 opacity-70"></i>Toggle Glass Blur</button>
+              <button class="menu-item" data-action="toggle-zen"><i class="fa-solid fa-moon mr-2 opacity-70"></i>Toggle Zen Mode</button>
             </div>
           </div>
 
           <div class="relative menu-dropdown-container">
-            <button class="menu-bar-btn px-2.5 py-1 rounded hover:bg-white/10 transition-colors">Go</button>
-            <div class="menu-dropdown hidden absolute top-full left-0 mt-1 w-48 rounded-xl bg-slate-900/90 backdrop-blur-2xl border border-white/15 shadow-2xl py-1.5 z-50 text-xs">
+            <button class="menu-bar-btn">Go</button>
+            <div class="menu-dropdown hidden absolute top-full left-0 mt-1 w-48 z-50 text-xs">
               <button class="menu-item" data-action="open-games"><i class="fa-solid fa-gamepad mr-2 opacity-70"></i>Games Hub</button>
               <button class="menu-item" data-action="open-browser"><i class="fa-solid fa-globe mr-2 opacity-70"></i>Web Browser</button>
               <button class="menu-item" data-action="open-music"><i class="fa-solid fa-music mr-2 opacity-70"></i>Audio Lounge</button>
@@ -84,8 +79,8 @@
           </div>
 
           <div class="relative menu-dropdown-container">
-            <button class="menu-bar-btn px-2.5 py-1 rounded hover:bg-white/10 transition-colors">Window</button>
-            <div class="menu-dropdown hidden absolute top-full left-0 mt-1 w-48 rounded-xl bg-slate-900/90 backdrop-blur-2xl border border-white/15 shadow-2xl py-1.5 z-50 text-xs">
+            <button class="menu-bar-btn">Window</button>
+            <div class="menu-dropdown hidden absolute top-full left-0 mt-1 w-48 z-50 text-xs">
               <button class="menu-item" data-action="minimize-all"><i class="fa-solid fa-window-minimize mr-2 opacity-70"></i>Minimize All</button>
               <button class="menu-item" data-action="restore-all"><i class="fa-solid fa-window-restore mr-2 opacity-70"></i>Restore All</button>
               <button class="menu-item" data-action="cascade-windows"><i class="fa-solid fa-layer-group mr-2 opacity-70"></i>Cascade Windows</button>
@@ -94,30 +89,30 @@
           </div>
         </div>
 
-        <!-- Right System Indicators -->
         <div class="flex items-center gap-3">
-          <!-- Audio mini status -->
+          <div id="topbar-live-wp" class="hidden items-center gap-1.5 px-2 py-0.5 rounded bg-white/10 text-[11px] text-slate-300">
+            <i class="fa-solid fa-film text-accent text-xs"></i>
+            <span id="topbar-live-title" class="truncate max-w-[120px]">Live Motion</span>
+            <button id="topbar-live-toggle" class="hover:text-white"><i class="fa-solid fa-pause text-[10px]"></i></button>
+          </div>
+
           <button id="topbar-audio-btn" class="flex items-center gap-1.5 px-2 py-1 rounded hover:bg-white/10 transition-colors opacity-80 hover:opacity-100" title="Audio Lounge">
             <i class="fa-solid fa-volume-high text-xs"></i>
           </button>
 
-          <!-- Network status -->
           <div class="flex items-center gap-1 text-slate-300 opacity-80" title="Network Connected">
             <i class="fa-solid fa-wifi text-xs"></i>
           </div>
 
-          <!-- Battery indicator -->
           <div id="battery-indicator" class="flex items-center gap-1 text-slate-300 opacity-80 text-[11px]" title="Battery">
             <span id="battery-pct">98%</span>
             <i class="fa-solid fa-battery-three-quarters text-xs text-emerald-400"></i>
           </div>
 
-          <!-- Control Center Button -->
           <button id="control-center-toggle" class="p-1 rounded hover:bg-white/10 transition-colors opacity-80 hover:opacity-100" title="Control Center">
             <i class="fa-solid fa-sliders text-xs"></i>
           </button>
 
-          <!-- Topbar Clock -->
           <button id="topbar-clock-btn" class="font-medium hover:bg-white/10 px-2 py-1 rounded transition-colors tracking-tight text-slate-200">
             <span id="topbar-date" class="mr-1.5 opacity-75">Fri Oct 9</span>
             <span id="topbar-time">7:38 AM</span>
@@ -125,11 +120,10 @@
         </div>
       </header>
 
-      <!-- Workspace Area for Desktop Widgets & Windows -->
       <main id="workspace" class="relative flex-1 w-full h-[calc(100vh-2rem)] overflow-hidden">
-        
-        <!-- Desktop Center Clock & Greeting Widget -->
-        <div id="desktop-clock-widget" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0 select-none pb-16 transition-opacity duration-300">
+        <div id="desktop-icons-layer"></div>
+
+        <div id="desktop-clock-widget" class="absolute inset-0 flex flex-col pointer-events-none z-0 select-none transition-opacity duration-300 clock-large pos-centre height-centre">
           <div id="clock-greeting" class="text-sm md:text-base font-medium tracking-widest uppercase opacity-75 drop-shadow-md text-slate-200 mb-1">
             Welcome to ZenithOS
           </div>
@@ -141,17 +135,11 @@
           </div>
         </div>
 
-        <!-- Windows Layer (Draggable & Resizable Windows) -->
-        <div id="windows-container" class="absolute inset-0 pointer-events-none z-20">
-          <!-- Windows are dynamically injected here -->
-        </div>
-
+        <div id="windows-container" class="absolute inset-0 pointer-events-none z-20"></div>
       </main>
 
-      <!-- Bottom Floating macOS/Axiom-style Dock -->
       <footer id="dock-container" class="absolute bottom-3 left-0 right-0 flex justify-center items-center z-40 pointer-events-none">
-        <div id="dock" class="pointer-events-auto flex items-end gap-2 px-3 py-2 rounded-2xl bg-slate-900/60 backdrop-blur-3xl border border-white/20 shadow-2xl transition-all duration-300">
-          <!-- Dock Items -->
+        <div id="dock">
           <div class="dock-item" data-app="files" data-tooltip="Files">
             <div class="dock-icon bg-gradient-to-br from-amber-400 to-amber-600">
               <i class="fa-solid fa-folder-closed"></i>
@@ -212,14 +200,12 @@
       </footer>
     </div>
 
-    <!-- Right Control Center Flyout -->
-    <div id="control-center" class="hidden absolute top-10 right-3 w-80 rounded-2xl bg-slate-900/85 backdrop-blur-3xl border border-white/15 shadow-2xl p-4 z-50 text-xs select-none animate-in">
+    <div id="control-center" class="hidden absolute top-10 right-3 w-80 rounded-2xl bg-slate-900/90 backdrop-blur-3xl border border-white/15 shadow-2xl p-4 z-50 text-xs select-none">
       <div class="text-sm font-bold text-white mb-3 flex items-center justify-between">
         <span>Control Center</span>
         <button id="close-control-center" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Quick Toggles Grid -->
       <div class="grid grid-cols-2 gap-2 mb-3">
         <button id="toggle-cloak-btn" class="quick-toggle p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center gap-2.5 transition-colors">
           <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
@@ -237,7 +223,7 @@
           </div>
           <div class="text-left">
             <div class="font-semibold text-slate-100">Theme</div>
-            <div id="theme-status-text" class="text-[10px] text-slate-400">Zenith</div>
+            <div id="theme-status-text" class="text-[10px] text-slate-400">Midnight</div>
           </div>
         </button>
 
@@ -253,30 +239,29 @@
 
         <button id="toggle-live-wp-btn" class="quick-toggle p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center gap-2.5 transition-colors">
           <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm">
-            <i class="fa-solid fa-sparkles"></i>
+            <i class="fa-solid fa-film"></i>
           </div>
           <div class="text-left">
-            <div class="font-semibold text-slate-100">Live Stars</div>
-            <div id="live-wp-status-text" class="text-[10px] text-slate-400">On</div>
+            <div class="font-semibold text-slate-100">Live Wallpaper</div>
+            <div id="live-wp-status-text" class="text-[10px] text-slate-400">Still</div>
           </div>
         </button>
       </div>
 
-      <!-- Sliders: Blur & Dim -->
       <div class="p-3 rounded-xl bg-white/5 border border-white/10 mb-3 space-y-3">
         <div>
           <div class="flex justify-between text-[11px] text-slate-300 mb-1">
-            <span><i class="fa-solid fa-eye-slash mr-1 opacity-70"></i>Glass Blur</span>
-            <span id="blur-val-text">16px</span>
+            <span>Glass Blur</span>
+            <span id="blur-val-text">0px</span>
           </div>
-          <input type="range" id="quick-blur-slider" min="0" max="32" value="16" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-accent">
+          <input type="range" id="quick-blur-slider" min="0" max="32" value="0" class="w-full" />
         </div>
         <div>
           <div class="flex justify-between text-[11px] text-slate-300 mb-1">
-            <span><i class="fa-solid fa-circle-half-stroke mr-1 opacity-70"></i>Wallpaper Dim</span>
-            <span id="dim-val-text">30%</span>
+            <span>Wallpaper Dim</span>
+            <span id="dim-val-text">15%</span>
           </div>
-          <input type="range" id="quick-dim-slider" min="0" max="85" value="30" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-accent">
+          <input type="range" id="quick-dim-slider" min="0" max="85" value="15" class="w-full" />
         </div>
       </div>
 
@@ -286,22 +271,18 @@
       </div>
     </div>
 
-    <!-- Spotlight Search Modal -->
     <div id="spotlight-modal" class="hidden fixed inset-0 z-50 flex items-start justify-center pt-24 bg-black/60 backdrop-blur-md">
-      <div class="w-full max-w-xl rounded-2xl bg-slate-900/90 backdrop-blur-3xl border border-white/20 shadow-2xl overflow-hidden animate-in">
+      <div class="w-full max-w-xl rounded-2xl bg-slate-900/90 backdrop-blur-3xl border border-white/20 shadow-2xl overflow-hidden">
         <div class="flex items-center px-4 py-3.5 border-b border-white/10 gap-3">
           <i class="fa-solid fa-magnifying-glass text-slate-400 text-lg"></i>
           <input type="text" id="spotlight-input" placeholder="Search apps, games, files, or evaluate math (e.g. 42 * 18)..." class="w-full bg-transparent text-white placeholder-slate-400 text-sm focus:outline-none" autofocus />
           <kbd class="text-[10px] bg-white/10 px-2 py-0.5 rounded text-slate-400">ESC</kbd>
         </div>
-        <div id="spotlight-results" class="max-h-80 overflow-y-auto p-2 space-y-1 text-xs">
-          <!-- Populated by JS -->
-        </div>
+        <div id="spotlight-results" class="max-h-80 overflow-y-auto p-2 space-y-1 text-xs"></div>
       </div>
     </div>
 
-    <!-- Desktop Right-Click Context Menu -->
-    <div id="context-menu" class="hidden fixed z-50 w-52 rounded-xl bg-slate-900/90 backdrop-blur-2xl border border-white/15 shadow-2xl py-1.5 text-xs select-none">
+    <div id="context-menu" class="hidden fixed z-50 w-52 rounded-xl bg-slate-900/95 backdrop-blur-2xl border border-white/15 shadow-2xl py-1.5 text-xs select-none">
       <button class="context-item" data-action="open-games"><i class="fa-solid fa-gamepad mr-2 opacity-70"></i>Games Hub</button>
       <button class="context-item" data-action="open-terminal"><i class="fa-solid fa-terminal mr-2 opacity-70"></i>Open Terminal</button>
       <button class="context-item" data-action="open-files"><i class="fa-regular fa-folder-open mr-2 opacity-70"></i>File Explorer</button>
@@ -313,10 +294,9 @@
       <button class="context-item" data-action="toggle-fullscreen"><i class="fa-solid fa-expand mr-2 opacity-70"></i>Fullscreen Mode</button>
     </div>
 
-    <!-- Lock Screen Overlay (optional lock mode) -->
-    <div id="lock-screen" class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-3xl text-white select-none">
+    <div id="lock-screen" class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/85 backdrop-blur-3xl text-white select-none">
       <div class="w-20 h-20 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-3xl text-accent mb-4">
-        <i class="fa-solid fa-atom animate-spin" style="animation-duration: 12s;"></i>
+        <i class="fa-solid fa-atom"></i>
       </div>
       <div class="text-4xl font-bold tracking-tight mb-1" id="lock-time">07:38 AM</div>
       <div class="text-sm text-slate-300 opacity-80 mb-8" id="lock-date">Friday, October 9</div>
@@ -325,7 +305,6 @@
       </button>
     </div>
 
-    <!-- Pure Vanilla JS Entry Point -->
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

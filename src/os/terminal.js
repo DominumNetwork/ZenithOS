@@ -1,8 +1,3 @@
-/**
- * ZenithOS Virtual Interactive Terminal
- * Unix shell simulator with real script execution, matrix effect & file system links.
- */
-
 import { state, THEMES, WALLPAPERS } from './state.js';
 import { cloaker, CLOAK_PRESETS } from './cloaker.js';
 import { windowManager } from './windowManager.js';

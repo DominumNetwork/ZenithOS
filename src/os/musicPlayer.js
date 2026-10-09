@@ -1,8 +1,3 @@
-/**
- * Zenith Audio Lounge
- * Synthesized chill lofi chords, ambient pads & frequency spectrum visualizer.
- */
-
 export function createMusicPlayerApp(containerEl, winState) {
   let isPlaying = false;
   let audioCtx = null;

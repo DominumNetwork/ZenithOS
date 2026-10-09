@@ -1,8 +1,3 @@
-/**
- * Zenith Spotlight Search
- * Global launcher, file finder & rapid expression solver.
- */
-
 import { windowManager } from './windowManager.js';
 import { state, THEMES } from './state.js';
 

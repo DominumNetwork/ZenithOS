@@ -1,8 +1,3 @@
-/**
- * Zenith Code Studio
- * In-browser code editor with live execution sandbox and file system integration.
- */
-
 import { state } from './state.js';
 
 const TEMPLATES = {

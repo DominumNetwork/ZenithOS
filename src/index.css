@@ -3,22 +3,36 @@
 :root {
   --accent: #7c5cff;
   --accent-hover: #6a48f5;
-  --accent-glow: rgba(124, 92, 255, 0.35);
-  --glass-bg: rgba(15, 23, 42, 0.75);
+  --accent-glow: rgba(124, 92, 255, 0.4);
+  --glass-bg: rgba(15, 23, 42, 0.82);
   --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-header: rgba(15, 23, 42, 0.85);
+  --glass-header: rgba(15, 23, 42, 0.92);
   --glass-blur: 24px;
+  --glass-transparency: 0.82;
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  --window-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.1);
+  --window-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.75), 0 0 1px 1px rgba(255, 255, 255, 0.12);
+  --dock-size: 52px;
 }
 
-.text-accent { color: var(--accent); }
-.bg-accent { background-color: var(--accent); }
-.bg-accent-hover:hover { background-color: var(--accent-hover); }
-.border-accent { border-color: var(--accent); }
+* {
+  box-sizing: border-box;
+}
 
-/* Custom Sleek Scrollbar */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #030712;
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -27,17 +41,96 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.4);
 }
 
-/* Window Architecture */
+/* Topbar */
+#topbar {
+  height: 32px;
+  min-height: 32px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(8, 12, 24, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 100;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#topbar.hidden-bar {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.menu-bar-btn {
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.menu-bar-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+/* Dropdown Menus */
+.menu-dropdown {
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  padding: 6px;
+}
+
+.menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  color: #e2e8f0;
+  font-size: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.menu-item:hover {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+.menu-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 4px 0;
+}
+
+/* Windows */
 .zenith-window {
   position: absolute;
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
@@ -47,19 +140,18 @@
   flex-direction: column;
   overflow: hidden;
   pointer-events: auto;
-  user-select: none;
-  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
-  will-change: transform, opacity, width, height, top, left;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  will-change: transform, opacity;
 }
 
 .zenith-window.active {
-  box-shadow: 0 30px 70px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.2), 0 0 25px var(--accent-glow);
-  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 30px 80px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.22), 0 0 25px var(--accent-glow);
+  border-color: rgba(255, 255, 255, 0.24);
 }
 
 .zenith-window.minimized {
   opacity: 0 !important;
-  transform: scale(0.6) translateY(200px) !important;
+  transform: scale(0.6) translateY(240px) !important;
   pointer-events: none !important;
   visibility: hidden;
 }
@@ -72,7 +164,6 @@
   height: calc(100vh - 32px - 64px) !important;
 }
 
-/* Window Titlebar */
 .window-titlebar {
   height: 38px;
   min-height: 38px;
@@ -84,14 +175,12 @@
   justify-content: space-between;
   cursor: grab;
   position: relative;
-  transition: background-color 0.2s ease;
 }
 
 .window-titlebar:active {
   cursor: grabbing;
 }
 
-/* Traffic Lights (macOS / WebOS style) */
 .traffic-lights {
   display: flex;
   align-items: center;
@@ -111,7 +200,8 @@
   opacity: 0.9;
   cursor: pointer;
   transition: all 0.15s ease;
-  position: relative;
+  border: none;
+  padding: 0;
 }
 
 .traffic-light i {
@@ -123,13 +213,13 @@
   opacity: 1;
 }
 
-.traffic-close { background-color: #ff5f56; border: 1px solid rgba(0, 0, 0, 0.15); }
+.traffic-close { background-color: #ff5f56; }
 .traffic-close:hover { background-color: #ff3b30; }
 
-.traffic-minimize { background-color: #ffbd2e; border: 1px solid rgba(0, 0, 0, 0.15); }
+.traffic-minimize { background-color: #ffbd2e; }
 .traffic-minimize:hover { background-color: #ff9500; }
 
-.traffic-maximize { background-color: #27c93f; border: 1px solid rgba(0, 0, 0, 0.15); }
+.traffic-maximize { background-color: #27c93f; }
 .traffic-maximize:hover { background-color: #34c759; }
 
 .window-title {
@@ -146,21 +236,12 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  letter-spacing: 0.2px;
 }
 
 .zenith-window.active .window-title {
   opacity: 1;
 }
 
-.window-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 10;
-}
-
-/* Window Content Body */
 .window-body {
   flex: 1;
   width: 100%;
@@ -170,7 +251,7 @@
   user-select: auto;
 }
 
-/* Resize Handles */
+/* Resize handles */
 .window-resizer {
   position: absolute;
   z-index: 30;
@@ -179,7 +260,30 @@
 .resizer-b { bottom: 0; left: 0; width: 100%; height: 6px; cursor: ns-resize; }
 .resizer-rb { right: 0; bottom: 0; width: 14px; height: 14px; cursor: nwse-resize; }
 
-/* Dock Items & Hover Magnification */
+/* Dock */
+#dock-container {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#dock-container.hidden-dock {
+  transform: translateY(120%);
+  opacity: 0;
+}
+
+#dock {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+}
+
 .dock-item {
   position: relative;
   display: flex;
@@ -191,8 +295,8 @@
 }
 
 .dock-icon {
-  width: 48px;
-  height: 48px;
+  width: var(--dock-size);
+  height: var(--dock-size);
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -200,7 +304,7 @@
   font-size: 20px;
   color: #fff;
   box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.35);
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dock-item:hover .dock-icon {
@@ -227,16 +331,15 @@
   box-shadow: 0 0 6px var(--accent);
 }
 
-/* Tooltip for Dock */
 .dock-item::before {
   content: attr(data-tooltip);
   position: absolute;
   top: -34px;
   padding: 4px 10px;
   border-radius: 8px;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.92);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
   font-size: 11px;
   font-weight: 500;
@@ -253,51 +356,243 @@
   transform: translateY(0);
 }
 
-/* Menu Dropdowns */
-.menu-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  color: var(--text-main);
-  text-align: left;
-  transition: background-color 0.15s ease;
-  border-radius: 6px;
+/* Desktop Icons Grid */
+#desktop-icons-layer {
+  position: absolute;
+  inset: 0;
+  padding: 16px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(auto-fill, 92px);
+  gap: 12px;
+  pointer-events: none;
+  z-index: 5;
+  transition: opacity 0.3s ease;
 }
 
-.menu-item:hover {
+#desktop-icons-layer.hidden-icons {
+  opacity: 0;
+  pointer-events: none !important;
+}
+
+.desktop-icon-item {
+  width: 80px;
+  height: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 6px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background-color 0.15s ease;
+  text-align: center;
+}
+
+.desktop-icon-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.desktop-icon-item.selected {
+  background-color: rgba(124, 92, 255, 0.25);
+  border: 1px solid var(--accent);
+}
+
+.desktop-icon-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+  margin-bottom: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.desktop-icon-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* Wallpaper Clock Widget */
+#desktop-clock-widget {
+  transition: opacity 0.3s ease;
+}
+
+#desktop-clock-widget.clock-off {
+  display: none !important;
+}
+
+#desktop-clock-widget.clock-small #desktop-clock-time {
+  font-size: 3rem;
+}
+
+#desktop-clock-widget.clock-large #desktop-clock-time {
+  font-size: 5.5rem;
+}
+
+#desktop-clock-widget.pos-left {
+  align-items: flex-start !important;
+  padding-left: 3rem;
+}
+#desktop-clock-widget.pos-centre {
+  align-items: center !important;
+}
+#desktop-clock-widget.pos-right {
+  align-items: flex-end !important;
+  padding-right: 3rem;
+}
+
+#desktop-clock-widget.height-top {
+  justify-content: flex-start !important;
+  padding-top: 4rem;
+}
+#desktop-clock-widget.height-centre {
+  justify-content: center !important;
+}
+#desktop-clock-widget.height-bottom {
+  justify-content: flex-end !important;
+  padding-bottom: 7rem;
+}
+
+/* UI Settings Switch */
+.ui-switch {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 22px;
+}
+
+.ui-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ui-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: 0.25s;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ui-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.ui-switch input:checked + .ui-switch-slider {
   background-color: var(--accent);
+}
+
+.ui-switch input:checked + .ui-switch-slider:before {
+  transform: translateX(16px);
+}
+
+/* Segmented Buttons */
+.seg-group {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.seg-btn {
+  padding: 4px 12px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.seg-btn:hover {
   color: #fff;
 }
 
-.menu-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 4px 0;
+.seg-btn.active {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
-/* Context Menu */
-.context-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  color: var(--text-main);
-  text-align: left;
-  transition: background-color 0.15s ease;
-  border-radius: 6px;
+/* Color Swatches */
+.color-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
-.context-item:hover {
-  background-color: var(--accent);
-  color: #fff;
+.color-swatch:hover {
+  transform: scale(1.15);
 }
 
-/* Game Card Styles */
+.color-swatch.active {
+  border-color: #ffffff;
+  transform: scale(1.18);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Range Sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.15);
+  height: 5px;
+  border-radius: 9999px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: transform 0.1s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Game Cards */
 .game-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   overflow: hidden;
   display: flex;
@@ -316,15 +611,14 @@
   width: 100%;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.3);
-  position: relative;
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .game-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 0.3s ease;
 }
 
 .game-card:hover img {
@@ -342,33 +636,16 @@
   text-align: center;
 }
 
-/* Terminal Monospace Styling */
-.terminal-window {
-  font-family: 'JetBrains Mono', monospace;
-  background: rgba(8, 11, 20, 0.94);
-  color: #e2e8f0;
+/* Vignette overlay */
+#wallpaper-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.85);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.terminal-cursor {
-  display: inline-block;
-  width: 8px;
-  height: 15px;
-  background: #34d399;
-  vertical-align: middle;
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.animate-in {
-  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+#wallpaper-vignette.active {
+  opacity: 1;
 }

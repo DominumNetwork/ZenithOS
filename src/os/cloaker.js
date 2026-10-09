@@ -1,12 +1,9 @@
-/**
- * ZenithOS Tab Cloaker & Privacy Stealth Suite
- */
 import { state } from './state.js';
 
 export const CLOAK_PRESETS = {
   none: {
     id: 'none',
-    name: 'Default (ZenithOS)',
+    name: 'Default',
     title: 'ZenithOS',
     icon: 'https://cdn.jsdelivr.net/gh/DominumNetwork/Dominum@main/src/assets/images/transparent-dominum.png'
   },
@@ -40,12 +37,6 @@ export const CLOAK_PRESETS = {
     title: 'Desmos | Graphing Calculator',
     icon: 'https://www.desmos.com/favicon.ico'
   },
-  edpuzzle: {
-    id: 'edpuzzle',
-    name: 'Edpuzzle',
-    title: 'Edpuzzle',
-    icon: 'https://edpuzzle.imgix.net/favicons/favicon-32.png'
-  },
   khan: {
     id: 'khan',
     name: 'Khan Academy',
@@ -71,7 +62,6 @@ export class Cloaker {
     const currentPreset = state.get('activeCloak') || 'none';
     this.applyPreset(currentPreset);
 
-    // Listen for state changes
     state.subscribe((event, s) => {
       if (event === 'state') {
         const cloak = s.get('activeCloak') || 'none';
@@ -79,20 +69,17 @@ export class Cloaker {
       }
     });
 
-    // Panic key detector
     window.addEventListener('keydown', (e) => {
       const panicKey = state.get('panicKey') || 'Escape';
-      
       if (e.key === panicKey) {
         const now = Date.now();
-        if (now - this.lastEscapeTime < 700) {
+        if (now - this.lastEscapeTime < 600) {
           this.escapePressCount++;
         } else {
           this.escapePressCount = 1;
         }
         this.lastEscapeTime = now;
 
-        // Triple tap panic key triggers immediate disguise or panic redirection
         if (this.escapePressCount >= 3) {
           this.escapePressCount = 0;
           this.triggerPanic();
@@ -114,41 +101,20 @@ export class Cloaker {
     }
     favicon.href = preset.icon;
 
-    // Update Control Center indicator if present
     const statusText = document.getElementById('cloak-status-text');
     if (statusText) {
       statusText.textContent = presetId === 'none' ? 'Disabled' : preset.name;
     }
   }
 
-  setCustomCloak(title, iconUrl) {
-    if (title) document.title = title;
-    let favicon = document.getElementById('app-favicon');
-    if (favicon && iconUrl) favicon.href = iconUrl;
-    state.set('activeCloak', 'custom');
-  }
-
   triggerPanic() {
     const panicUrl = state.get('panicUrl') || 'https://classroom.google.com';
-    // If not currently cloaked, toggle to classroom cloak, or redirect
-    const current = state.get('activeCloak');
-    if (current === 'none') {
-      state.set('activeCloak', 'classroom');
-    } else {
-      // Immediate emergency redirect
-      window.location.replace(panicUrl);
-    }
+    window.location.replace(panicUrl);
   }
 
-  /**
-   * Opens any URL inside an unblockable about:blank popup tab
-   */
   openInAboutBlank(url, title = 'Google Drive') {
     const win = window.open('about:blank', '_blank');
-    if (!win) {
-      console.warn('Pop-up was blocked by browser.');
-      return false;
-    }
+    if (!win) return false;
 
     win.document.write(`
       <!DOCTYPE html>
@@ -162,12 +128,77 @@ export class Cloaker {
           </style>
         </head>
         <body>
-          <iframe id="stealth-frame" src="${url}" allowfullscreen="true"></iframe>
+          <iframe src="${url}" allowfullscreen="true"></iframe>
         </body>
       </html>
     `);
     win.document.close();
     return true;
+  }
+
+  launchAboutBlankCloak() {
+    this.openInAboutBlank(window.location.href, 'My Drive - Google Drive');
+  }
+
+  launchBlobCloak() {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Google Docs</title>
+          <link rel="icon" href="https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico">
+          <style>
+            body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
+            iframe { width:100%; height:100%; border:none; }
+          </style>
+        </head>
+        <body><iframe src="${window.location.href}" allowfullscreen="true"></iframe></body>
+      </html>
+    `;
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  }
+
+  downloadHtmlCloak() {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Google Classroom</title>
+          <link rel="icon" href="https://ssl.gstatic.com/classroom/favicon.png">
+          <style>
+            body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
+            iframe { width:100%; height:100%; border:none; }
+          </style>
+        </head>
+        <body><iframe src="${window.location.href}" allowfullscreen="true"></iframe></body>
+      </html>
+    `;
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'classroom_launcher.html';
+    a.click();
+  }
+
+  launchBase64Cloak() {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Classes</title>
+          <link rel="icon" href="https://ssl.gstatic.com/classroom/favicon.png">
+          <style>
+            body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
+            iframe { width:100%; height:100%; border:none; }
+          </style>
+        </head>
+        <body><iframe src="${window.location.href}" allowfullscreen="true"></iframe></body>
+      </html>
+    `;
+    const b64 = btoa(unescape(encodeURIComponent(html)));
+    window.open(`data:text/html;base64,${b64}`, '_blank');
   }
 }
 

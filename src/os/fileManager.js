@@ -1,7 +1,3 @@
-/**
- * ZenithOS Virtual File Explorer
- */
-
 import { state } from './state.js';
 import { windowManager } from './windowManager.js';
 

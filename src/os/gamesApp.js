@@ -1,9 +1,3 @@
-/**
- * ZenithOS Games Hub
- * Native multi-provider unblocked gaming suite
- * Ported from games.html with zero ads and zero premium locks.
- */
-
 import { cloaker } from './cloaker.js';
 
 export function createGamesApp(containerEl, winState) {

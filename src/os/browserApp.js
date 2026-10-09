@@ -1,7 +1,3 @@
-/**
- * Zenith Web Browser & Stealth Launcher
- */
-
 import { cloaker } from './cloaker.js';
 
 const BOOKMARKS = [

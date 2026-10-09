@@ -1,7 +1,3 @@
-/**
- * ZenithOS Multi-Window Manager
- */
-
 export class WindowManager {
   constructor() {
     this.windows = new Map(); // id -> window state
