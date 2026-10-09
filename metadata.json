@@ -1,0 +1,6 @@
+{
+  "name": "ZenithOS",
+  "description": "A sleek, distraction-free WebOS desktop environment with multi-window multitasking, unblocked games library, terminal, code studio, and tab cloaking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

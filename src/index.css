@@ -1,0 +1,374 @@
+@import "tailwindcss";
+
+:root {
+  --accent: #7c5cff;
+  --accent-hover: #6a48f5;
+  --accent-glow: rgba(124, 92, 255, 0.35);
+  --glass-bg: rgba(15, 23, 42, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-header: rgba(15, 23, 42, 0.85);
+  --glass-blur: 24px;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --window-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.text-accent { color: var(--accent); }
+.bg-accent { background-color: var(--accent); }
+.bg-accent-hover:hover { background-color: var(--accent-hover); }
+.border-accent { border-color: var(--accent); }
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Window Architecture */
+.zenith-window {
+  position: absolute;
+  border-radius: 18px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--window-shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: auto;
+  user-select: none;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  will-change: transform, opacity, width, height, top, left;
+}
+
+.zenith-window.active {
+  box-shadow: 0 30px 70px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.2), 0 0 25px var(--accent-glow);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.zenith-window.minimized {
+  opacity: 0 !important;
+  transform: scale(0.6) translateY(200px) !important;
+  pointer-events: none !important;
+  visibility: hidden;
+}
+
+.zenith-window.maximized {
+  border-radius: 0 !important;
+  top: 32px !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - 32px - 64px) !important;
+}
+
+/* Window Titlebar */
+.window-titlebar {
+  height: 38px;
+  min-height: 38px;
+  padding: 0 14px;
+  background: var(--glass-header);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: grab;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.window-titlebar:active {
+  cursor: grabbing;
+}
+
+/* Traffic Lights (macOS / WebOS style) */
+.traffic-lights {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  z-index: 10;
+}
+
+.traffic-light {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  color: rgba(0, 0, 0, 0.7);
+  opacity: 0.9;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.traffic-light i {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.traffic-lights:hover .traffic-light i {
+  opacity: 1;
+}
+
+.traffic-close { background-color: #ff5f56; border: 1px solid rgba(0, 0, 0, 0.15); }
+.traffic-close:hover { background-color: #ff3b30; }
+
+.traffic-minimize { background-color: #ffbd2e; border: 1px solid rgba(0, 0, 0, 0.15); }
+.traffic-minimize:hover { background-color: #ff9500; }
+
+.traffic-maximize { background-color: #27c93f; border: 1px solid rgba(0, 0, 0, 0.15); }
+.traffic-maximize:hover { background-color: #34c759; }
+
+.window-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  opacity: 0.85;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  letter-spacing: 0.2px;
+}
+
+.zenith-window.active .window-title {
+  opacity: 1;
+}
+
+.window-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+
+/* Window Content Body */
+.window-body {
+  flex: 1;
+  width: 100%;
+  height: calc(100% - 38px);
+  position: relative;
+  overflow: hidden;
+  user-select: auto;
+}
+
+/* Resize Handles */
+.window-resizer {
+  position: absolute;
+  z-index: 30;
+}
+.resizer-r { right: 0; top: 0; width: 6px; height: 100%; cursor: ew-resize; }
+.resizer-b { bottom: 0; left: 0; width: 100%; height: 6px; cursor: ns-resize; }
+.resizer-rb { right: 0; bottom: 0; width: 14px; height: 14px; cursor: nwse-resize; }
+
+/* Dock Items & Hover Magnification */
+.dock-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.dock-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+  box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
+}
+
+.dock-item:hover .dock-icon {
+  transform: translateY(-8px) scale(1.15);
+  box-shadow: 0 14px 24px -4px rgba(0, 0, 0, 0.5), 0 0 15px var(--accent-glow);
+}
+
+.dock-indicator {
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.8);
+  margin-top: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.dock-item.running .dock-indicator {
+  opacity: 1;
+}
+
+.dock-item.active-app .dock-indicator {
+  background-color: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+/* Tooltip for Dock */
+.dock-item::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: -34px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dock-item:hover::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Menu Dropdowns */
+.menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  color: var(--text-main);
+  text-align: left;
+  transition: background-color 0.15s ease;
+  border-radius: 6px;
+}
+
+.menu-item:hover {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+.menu-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 4px 0;
+}
+
+/* Context Menu */
+.context-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  color: var(--text-main);
+  text-align: left;
+  transition: background-color 0.15s ease;
+  border-radius: 6px;
+}
+
+.context-item:hover {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+/* Game Card Styles */
+.game-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.game-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.5), 0 0 16px var(--accent-glow);
+}
+
+.game-card-img-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.game-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.game-card:hover img {
+  transform: scale(1.08);
+}
+
+.game-card-title {
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* Terminal Monospace Styling */
+.terminal-window {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(8, 11, 20, 0.94);
+  color: #e2e8f0;
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 15px;
+  background: #34d399;
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
