@@ -1,8 +1,14 @@
-import './index.css';
 import { state, THEMES, STILL_WALLPAPERS, LIVE_WALLPAPERS } from './os/state.js';
 import { windowManager } from './os/windowManager.js';
 import { cloaker } from './os/cloaker.js';
 import { spotlight } from './os/spotlight.js';
+import { createGamesApp } from './os/gamesApp.js';
+import { createTerminalApp } from './os/terminal.js';
+import { createFileManagerApp } from './os/fileManager.js';
+import { createCodeStudioApp } from './os/codeStudio.js';
+import { createBrowserApp } from './os/browserApp.js';
+import { createMusicPlayerApp } from './os/musicPlayer.js';
+import { createSettingsApp } from './os/settingsApp.js';
 
 class ZenithOS {
   constructor() {
@@ -368,6 +374,7 @@ class ZenithOS {
     ICONS.forEach(item => {
       const el = document.createElement('div');
       el.className = 'desktop-icon-item';
+      el.dataset.id = item.id;
       el.innerHTML = `
         <div class="desktop-icon-img bg-gradient-to-br ${item.color}">
           <i class="${item.icon}"></i>
@@ -380,6 +387,7 @@ class ZenithOS {
         layer.querySelectorAll('.desktop-icon-item').forEach(i => i.classList.remove('selected'));
         el.classList.add('selected');
         this.selectedIcon = item.id;
+        this.launchApp(item.id);
       });
 
       el.addEventListener('dblclick', (e) => {
@@ -583,19 +591,19 @@ class ZenithOS {
       });
     });
 
-    dock.querySelectorAll('.dock-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const app = item.dataset.app;
-        if (app === 'spotlight') {
-          spotlight.toggle();
-        } else if (app) {
-          this.launchApp(app);
-        }
-      });
+    dock.addEventListener('click', (e) => {
+      const item = e.target.closest('.dock-item');
+      if (!item) return;
+      const app = item.dataset.app;
+      if (app === 'spotlight') {
+        spotlight.toggle();
+      } else if (app) {
+        this.launchApp(app);
+      }
     });
   }
 
-  launchApp(appName) {
+  launchApp(appName, extraData = null) {
     const existing = windowManager.windows.get(appName);
     if (existing) {
       if (existing.minimized) {
@@ -606,83 +614,70 @@ class ZenithOS {
       return;
     }
 
-    switch (appName) {
-      case 'games':
-        windowManager.createWindow({
-          id: 'games',
-          title: 'Games Hub',
-          icon: 'fa-solid fa-gamepad',
-          width: 980,
-          height: 620,
-          onInit: (b, w, ws) => import('./os/gamesApp.js').then(m => m.createGamesApp(b, ws))
-        });
-        break;
+    const REGISTRY = {
+      games: {
+        title: 'Games Hub',
+        icon: 'fa-solid fa-gamepad',
+        width: 980,
+        height: 620,
+        init: (b, ws) => createGamesApp(b, ws)
+      },
+      terminal: {
+        title: 'Zenith Terminal',
+        icon: 'fa-solid fa-terminal',
+        width: 760,
+        height: 460,
+        init: (b, ws) => createTerminalApp(b, ws)
+      },
+      files: {
+        title: 'File Explorer',
+        icon: 'fa-solid fa-folder-closed',
+        width: 840,
+        height: 520,
+        init: (b, ws) => createFileManagerApp(b, ws)
+      },
+      code: {
+        title: 'Zenith Code',
+        icon: 'fa-solid fa-code',
+        width: 900,
+        height: 580,
+        init: (b, ws) => createCodeStudioApp(b, ws, extraData)
+      },
+      browser: {
+        title: 'Web Browser',
+        icon: 'fa-solid fa-globe',
+        width: 920,
+        height: 580,
+        init: (b, ws) => createBrowserApp(b, ws)
+      },
+      music: {
+        title: 'Audio Lounge',
+        icon: 'fa-solid fa-music',
+        width: 680,
+        height: 480,
+        init: (b, ws) => createMusicPlayerApp(b, ws)
+      },
+      settings: {
+        title: 'Settings',
+        icon: 'fa-solid fa-sliders',
+        width: 820,
+        height: 580,
+        init: (b, ws) => createSettingsApp(b, ws)
+      }
+    };
 
-      case 'terminal':
-        windowManager.createWindow({
-          id: 'terminal',
-          title: 'Zenith Terminal',
-          icon: 'fa-solid fa-terminal',
-          width: 760,
-          height: 460,
-          onInit: (b, w, ws) => import('./os/terminal.js').then(m => m.createTerminalApp(b, ws))
-        });
-        break;
-
-      case 'files':
-        windowManager.createWindow({
-          id: 'files',
-          title: 'File Explorer',
-          icon: 'fa-solid fa-folder-closed',
-          width: 840,
-          height: 520,
-          onInit: (b, w, ws) => import('./os/fileManager.js').then(m => m.createFileManagerApp(b, ws))
-        });
-        break;
-
-      case 'code':
-        windowManager.createWindow({
-          id: 'code',
-          title: 'Zenith Code',
-          icon: 'fa-solid fa-code',
-          width: 900,
-          height: 580,
-          onInit: (b, w, ws) => import('./os/codeStudio.js').then(m => m.createCodeStudioApp(b, ws))
-        });
-        break;
-
-      case 'browser':
-        windowManager.createWindow({
-          id: 'browser',
-          title: 'Web Browser',
-          icon: 'fa-solid fa-globe',
-          width: 920,
-          height: 580,
-          onInit: (b, w, ws) => import('./os/browserApp.js').then(m => m.createBrowserApp(b, ws))
-        });
-        break;
-
-      case 'music':
-        windowManager.createWindow({
-          id: 'music',
-          title: 'Audio Lounge',
-          icon: 'fa-solid fa-music',
-          width: 680,
-          height: 480,
-          onInit: (b, w, ws) => import('./os/musicPlayer.js').then(m => m.createMusicPlayerApp(b, ws))
-        });
-        break;
-
-      case 'settings':
-        windowManager.createWindow({
-          id: 'settings',
-          title: 'Settings',
-          icon: 'fa-solid fa-sliders',
-          width: 820,
-          height: 580,
-          onInit: (b, w, ws) => import('./os/settingsApp.js').then(m => m.createSettingsApp(b, ws))
-        });
-        break;
+    const target = REGISTRY[appName];
+    if (target) {
+      windowManager.createWindow({
+        id: appName,
+        title: target.title,
+        icon: target.icon,
+        width: target.width,
+        height: target.height,
+        onInit: (b, winEl, ws) => {
+          target.init(b, ws);
+        }
+      });
     }
   }
 
@@ -793,6 +788,14 @@ class ZenithOS {
 }
 
 const os = new ZenithOS();
-window.addEventListener('DOMContentLoaded', () => {
+window.zenithOS = os;
+
+function startOS() {
   os.boot();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startOS);
+} else {
+  startOS();
+}

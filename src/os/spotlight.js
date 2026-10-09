@@ -103,43 +103,43 @@ export class Spotlight {
         title: 'Games Hub',
         subtitle: 'Unblocked games catalog (7 providers, zero ads)',
         icon: 'fa-solid fa-gamepad text-purple-400',
-        action: () => windowManager.createWindow({ id: 'games', title: 'Games Hub', icon: 'fa-solid fa-gamepad', width: 980, height: 620, onInit: (b, w, ws) => import('./gamesApp.js').then(m => m.createGamesApp(b, ws)) })
+        action: () => window.zenithOS?.launchApp('games')
       },
       {
         title: 'Terminal',
         subtitle: 'Virtual shell with interactive commands & matrix rain',
         icon: 'fa-solid fa-terminal text-emerald-400',
-        action: () => windowManager.createWindow({ id: 'terminal', title: 'Zenith Terminal', icon: 'fa-solid fa-terminal', width: 780, height: 480, onInit: (b, w, ws) => import('./terminal.js').then(m => m.createTerminalApp(b, ws)) })
+        action: () => window.zenithOS?.launchApp('terminal')
       },
       {
         title: 'Files',
         subtitle: 'Virtual File Explorer & persistent storage',
         icon: 'fa-solid fa-folder-closed text-amber-400',
-        action: () => windowManager.createWindow({ id: 'files', title: 'File Explorer', icon: 'fa-solid fa-folder-closed', width: 840, height: 520, onInit: (b, w, ws) => import('./fileManager.js').then(m => m.createFileManagerApp(b, ws)) })
+        action: () => window.zenithOS?.launchApp('files')
       },
       {
         title: 'Zenith Code',
         subtitle: 'Script editor with live preview execution',
         icon: 'fa-solid fa-code text-cyan-400',
-        action: () => windowManager.createWindow({ id: 'code', title: 'Zenith Code', icon: 'fa-solid fa-code', width: 900, height: 580, onInit: (b, w, ws) => import('./codeStudio.js').then(m => m.createCodeStudioApp(b, ws)) })
+        action: () => window.zenithOS?.launchApp('code')
       },
       {
         title: 'Web Browser',
         subtitle: 'Stealth web launcher with unblocked bookmarks',
         icon: 'fa-solid fa-globe text-sky-400',
-        action: () => windowManager.createWindow({ id: 'browser', title: 'Web Browser', icon: 'fa-solid fa-globe', width: 920, height: 580, onInit: (b, w, ws) => import('./browserApp.js').then(m => m.createBrowserApp(b, ws)) })
+        action: () => window.zenithOS?.launchApp('browser')
       },
       {
         title: 'Audio Lounge',
         subtitle: 'Chill lofi synthesizers & waveform visualizer',
         icon: 'fa-solid fa-music text-rose-400',
-        action: () => windowManager.createWindow({ id: 'music', title: 'Audio Lounge', icon: 'fa-solid fa-music', width: 720, height: 480, onInit: (b, w, ws) => import('./musicPlayer.js').then(m => m.createMusicPlayerApp(b, ws)) })
+        action: () => window.zenithOS?.launchApp('music')
       },
       {
         title: 'System Settings',
         subtitle: 'Wallpapers, themes, tab cloaking & dock physics',
         icon: 'fa-solid fa-sliders text-slate-300',
-        action: () => windowManager.createWindow({ id: 'settings', title: 'System Settings', icon: 'fa-solid fa-sliders', width: 780, height: 540, onInit: (b, w, ws) => import('./settingsApp.js').then(m => m.createSettingsApp(b, ws)) })
+        action: () => window.zenithOS?.launchApp('settings')
       }
     ];
 
@@ -159,14 +159,7 @@ export class Spotlight {
               subtitle: `File in /${folderName}`,
               icon: 'fa-solid fa-file-lines text-indigo-400',
               action: () => {
-                windowManager.createWindow({
-                  id: 'code',
-                  title: `Zenith Code - ${fileName}`,
-                  icon: 'fa-solid fa-code',
-                  width: 900,
-                  height: 580,
-                  onInit: (b, w, ws) => import('./codeStudio.js').then(m => m.createCodeStudioApp(b, ws, { filename: fileName, content: file.content, folder: folderName }))
-                });
+                window.zenithOS?.launchApp('code', { filename: fileName, content: file.content, folder: folderName });
               }
             });
           }

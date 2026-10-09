@@ -440,19 +440,12 @@ export function createTerminalApp(containerEl, winState) {
 
       case 'open': {
         const appName = (args[0] || '').toLowerCase();
-        const appMap = {
-          games: () => windowManager.createWindow({ id: 'games', title: 'Games Hub', icon: 'fa-solid fa-gamepad', width: 980, height: 620, onInit: (b, w, ws) => import('./gamesApp.js').then(m => m.createGamesApp(b, ws)) }),
-          files: () => windowManager.createWindow({ id: 'files', title: 'File Explorer', icon: 'fa-solid fa-folder-closed', width: 840, height: 520, onInit: (b, w, ws) => import('./fileManager.js').then(m => m.createFileManagerApp(b, ws)) }),
-          code: () => windowManager.createWindow({ id: 'code', title: 'Zenith Code', icon: 'fa-solid fa-code', width: 900, height: 580, onInit: (b, w, ws) => import('./codeStudio.js').then(m => m.createCodeStudioApp(b, ws)) }),
-          browser: () => windowManager.createWindow({ id: 'browser', title: 'Web Browser', icon: 'fa-solid fa-globe', width: 920, height: 580, onInit: (b, w, ws) => import('./browserApp.js').then(m => m.createBrowserApp(b, ws)) }),
-          settings: () => windowManager.createWindow({ id: 'settings', title: 'System Settings', icon: 'fa-solid fa-sliders', width: 780, height: 540, onInit: (b, w, ws) => import('./settingsApp.js').then(m => m.createSettingsApp(b, ws)) }),
-          music: () => windowManager.createWindow({ id: 'music', title: 'Audio Lounge', icon: 'fa-solid fa-music', width: 720, height: 480, onInit: (b, w, ws) => import('./musicPlayer.js').then(m => m.createMusicPlayerApp(b, ws)) })
-        };
-        if (appMap[appName]) {
-          appMap[appName]();
+        const validApps = ['games', 'files', 'code', 'browser', 'settings', 'music', 'terminal'];
+        if (validApps.includes(appName) && window.zenithOS) {
+          window.zenithOS.launchApp(appName);
           printLine(`<span class="text-emerald-400">Launched ${appName}</span>`);
         } else {
-          printLine(`<span class="text-red-400">Unknown app '${appName}'. Try: games, files, code, browser, music, settings</span>`);
+          printLine(`<span class="text-red-400">Unknown app '${appName}'. Try: games, files, code, browser, music, settings, terminal</span>`);
         }
         break;
       }

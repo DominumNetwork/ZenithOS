@@ -184,19 +184,9 @@ export function createFileManagerApp(containerEl, winState) {
   }
 
   function openFile(name, file) {
-    // Open in Zenith Code editor
-    windowManager.createWindow({
-      id: 'code',
-      title: `Zenith Code - ${name}`,
-      icon: 'fa-solid fa-code',
-      width: 900,
-      height: 580,
-      onInit: (bodyEl, winEl, ws) => {
-        import('./codeStudio.js').then(m => {
-          m.createCodeStudioApp(bodyEl, ws, { filename: name, content: file.content, folder: currentFolder });
-        });
-      }
-    });
+    if (window.zenithOS) {
+      window.zenithOS.launchApp('code', { filename: name, content: file.content, folder: currentFolder });
+    }
   }
 
   // Sidebar navigation

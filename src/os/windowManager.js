@@ -42,13 +42,19 @@ export class WindowManager {
 
     // Calculate initial centered position with slight offset
     const workspace = document.getElementById('workspace') || document.body;
-    const wsRect = workspace.getBoundingClientRect();
+    const wsRect = workspace ? workspace.getBoundingClientRect() : null;
+    const wsWidth = (wsRect && wsRect.width > 100) ? wsRect.width : window.innerWidth;
+    const wsHeight = (wsRect && wsRect.height > 100) ? wsRect.height : (window.innerHeight - 40);
     const offset = (this.windows.size * 28) % 140;
 
-    let initialW = Math.min(width, wsRect.width - 40);
-    let initialH = Math.min(height, wsRect.height - 80);
-    let initialX = Math.max(20, Math.floor((wsRect.width - initialW) / 2) + offset);
-    let initialY = Math.max(10, Math.floor((wsRect.height - initialH) / 2) - 20 + offset);
+    const effectiveMinWidth = Math.min(minWidth, Math.max(260, wsWidth - 20));
+    const effectiveMinHeight = Math.min(minHeight, Math.max(200, wsHeight - 40));
+    let initialW = Math.max(effectiveMinWidth, Math.min(width, wsWidth - 24));
+    let initialH = Math.max(effectiveMinHeight, Math.min(height, wsHeight - 40));
+    let initialX = Math.max(8, Math.floor((wsWidth - initialW) / 2) + (wsWidth > 768 ? offset : 0));
+    let initialY = Math.max(8, Math.floor((wsHeight - initialH) / 2) - 10 + (wsHeight > 600 ? offset : 0));
+    if (initialX + initialW > wsWidth) initialX = Math.max(4, wsWidth - initialW - 4);
+    if (initialY + initialH > wsHeight) initialY = Math.max(4, wsHeight - initialH - 4);
 
     // Build DOM structure
     const winEl = document.createElement('div');
@@ -86,6 +92,7 @@ export class WindowManager {
       bodyEl.appendChild(content);
     }
 
+    this.container = this.container || document.getElementById('windows-container') || document.getElementById('workspace') || document.body;
     this.container.appendChild(winEl);
 
     const winState = {
